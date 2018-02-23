@@ -1,6 +1,4 @@
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.GridPane?>
-
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.text.Text?>
@@ -26,44 +24,55 @@
            GridPane.columnIndex="0" GridPane.rowIndex="3"/>
     <PasswordField fx:id = "password"
             GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+    <HBox spacing="10" alignment="BOTTOM_LEFT"
+          GridPane.columnIndex="0" GridPane.rowIndex="4">
+        <Button text="Start Day"
+                onAction="#startDay" />
+    </HBox>
     <Label text="Site Number: "
-           GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-    <TextField fx:id="siteNumber"
-            GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-    <Label text="Site Name: "
            GridPane.columnIndex="0" GridPane.rowIndex="5"/>
-    <TextField fx:id="siteName"
+    <TextField fx:id="siteNumber"
             GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+    <Label text="Site Name: "
+           GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+    <TextField fx:id="siteName"
+            GridPane.columnIndex="1" GridPane.rowIndex="6"/>
     <Label text="Project Notations: "
-           GridPane.columnIndex="0" GridPane.rowIndex="6" />
+           GridPane.columnIndex="0" GridPane.rowIndex="7" />
     <TextArea fx:id="projectNote"
-            GridPane.columnIndex="0" GridPane.rowIndex="7" GridPane.columnSpan="2"/>
+            GridPane.columnIndex="0" GridPane.rowIndex="8" GridPane.columnSpan="2"/>
     <Label text="Non-Project Notations: "
-           GridPane.columnIndex="0" GridPane.rowIndex="8"/>
+           GridPane.columnIndex="0" GridPane.rowIndex="9"/>
     <TextArea fx:id="nonProjectNote"
-            GridPane.columnIndex="0" GridPane.rowIndex="9" GridPane.columnSpan="2"/>
+            GridPane.columnIndex="0" GridPane.rowIndex="10" GridPane.columnSpan="2"/>
     <Label text="Choose Data File: "
-           GridPane.columnIndex="0" GridPane.rowIndex="10"/>
+           GridPane.columnIndex="0" GridPane.rowIndex="11"/>
     <HBox spacing="10" alignment="TOP_LEFT"
-            GridPane.columnIndex="1" GridPane.rowIndex="10">
+            GridPane.columnIndex="1" GridPane.rowIndex="11">
             <Button text="Data File..."
                     onAction="#handleDataFileSearch" />
         <Text fx:id="filename"
               />
     </HBox>
     <Label text="Insert start time of measurment (hh:mm): "
-           GridPane.columnIndex="0" GridPane.rowIndex="11"/>
-    <TextField fx:id="startTime"
-            GridPane.columnIndex="1" GridPane.rowIndex="11"/>
-    <Label text="Insert number of 10-minute Intervals: "
            GridPane.columnIndex="0" GridPane.rowIndex="12"/>
-    <TextField fx:id="intervals"
+    <TextField fx:id="startTime"
             GridPane.columnIndex="1" GridPane.rowIndex="12"/>
-    <HBox spacing="10" alignment="BOTTOM_CENTER"
-          GridPane.columnIndex="0" GridPane.rowIndex="13">
-        <Button text="Submit"
+    <Label text="Insert number of 10-minute Intervals: "
+           GridPane.columnIndex="0" GridPane.rowIndex="13"/>
+    <TextField fx:id="intervals"
+            GridPane.columnIndex="1" GridPane.rowIndex="13"/>
+    <HBox spacing="10" alignment="BOTTOM_LEFT"
+          GridPane.columnIndex="0" GridPane.rowIndex="14">
+        <Button text="Make Entry"
                 onAction="#onSubmit" />
     </HBox>
+    <HBox spacing="10" alignment="BOTTOM_RIGHT"
+          GridPane.columnIndex="1" GridPane.rowIndex="14">
+        <Button text="End Day"
+                onAction="#endDay" />
+    </HBox>
+
 
 
 

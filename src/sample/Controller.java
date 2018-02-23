@@ -13,6 +13,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -59,6 +61,61 @@ public class Controller {
         fillOutForm(data, times, input);
 
     }
+    @FXML protected void startDay(ActionEvent event) {
+        final String SLMMODEL = "Rion NL-52";
+        final String SLMSERIAL = "01243609";
+        final String STARTTIME = "07:00";
+        final String ENDTIME = "07:30";
+        final String CALIBRATE = "07:27;";
+        final String STARTNOTATION = "NCO preps, calibrates, and sets up monitor. ";
+        String exePath = "/home/trevorsimpkin/IdeaProjects/RobotNCO/selenium-java-3.9.1/chromedriver";
+        System.setProperty("webdriver.chrome.driver", exePath);
+        WebDriver driver = new ChromeDriver();
+        driver.get(url.getText());
+        login(driver, username.getText(), password.getText());
+        driver.get(url.getText());
+
+        WebElement slmElement=driver.findElement(By.xpath("//input[@name='soundlevelmeter']"));
+        slmElement.clear();
+        slmElement.sendKeys(SLMMODEL);
+        WebElement slmSerialElement=driver.findElement(By.xpath("//input[@name='serialnumber']"));
+        slmSerialElement.sendKeys(SLMSERIAL);
+        WebElement startTimeElement=driver.findElement(By.xpath("//input[@name='locationtimeperiodstart0']"));
+        startTimeElement.sendKeys(STARTTIME);
+        WebElement endTimeElement=driver.findElement(By.xpath("//input[@name='locationtimeperiodend0']"));
+        endTimeElement.sendKeys(ENDTIME);
+        WebElement projNotationElement = driver.findElement(By.xpath("//textarea[@name='notations0']"));
+        projNotationElement.sendKeys(STARTNOTATION);
+        WebElement calibrationElement=driver.findElement(By.xpath("//input[@name='calibrationtime']"));
+        calibrationElement.sendKeys(CALIBRATE);
+
+    }
+
+    @FXML protected void endDay(ActionEvent event) {
+        final String CALIBRATE = " 14:55;";
+        final String SUMMARY = "NCO monitored noise levels at 85 Newark Ave related to a front end loader, crane, manual hammer, manlift, generator and hand tools. Acoustic blankets lined the eastern and western perimeters of the work site. No project related exceedances were documented.";
+        //weathertemperature, weatherhumidity, weatherwindspeed
+        String exePath = "/home/trevorsimpkin/IdeaProjects/RobotNCO/selenium-java-3.9.1/chromedriver";
+        System.setProperty("webdriver.chrome.driver", exePath);
+        WebDriver driver = new ChromeDriver();
+        driver.get(url.getText());
+        login(driver, username.getText(), password.getText());
+        driver.get(url.getText());
+        String [] weather = getWeather();
+        WebElement temperatureElement=driver.findElement(By.xpath("//input[@name='weathertemperature']"));
+        temperatureElement.sendKeys(weather[0]);
+        WebElement humidityElement=driver.findElement(By.xpath("//input[@name='weatherhumidity']"));
+        humidityElement.sendKeys(weather[1]);
+        WebElement windspeedElement=driver.findElement(By.xpath("//input[@name='weatherwindspeed']"));
+        windspeedElement.sendKeys(weather[2]);
+        WebElement calibrateElement=driver.findElement(By.xpath("//input[@name='calibrationtime']"));
+        calibrateElement.sendKeys(CALIBRATE);
+        WebElement summaryElement=driver.findElement(By.xpath("//textarea[@name='summary']"));
+        summaryElement.sendKeys(SUMMARY);
+
+
+    }
+
     private static void fillOutForm(double [] data, String [] times, String [] input) {
         String exePath = "/home/trevorsimpkin/IdeaProjects/RobotNCO/selenium-java-3.9.1/chromedriver";
         System.setProperty("webdriver.chrome.driver", exePath);
@@ -107,7 +164,7 @@ public class Controller {
         button.click();
     }
     private static double [] readCSVFile(String csvFile, String startTime, int intervals, String [] times) {
-        BufferedReader br = null;
+        BufferedReader br;
         String line = "";
         int i = 0;
         double min;
@@ -140,12 +197,104 @@ public class Controller {
                 dataToPrint[(2*i)+1] = max;
                 i++;
                 line = br.readLine();
-            };
+            }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
         return dataToPrint;
+    }
+
+    private static String [] getWeather() {
+        String [] weather= new String[3];
+        String [] tableData = new String[9];
+        int maxWind = -1;
+        int minWind = 110;
+        int maxHumidity = -1;
+        int minHmidity = 110;
+        int maxTemp = -1;
+        int minTemp = 100;
+        int temp;
+
+        String endRow = "</tr>";
+        try {
+            URL ur = new URL("http://w1.weather.gov/data/obhistory/KEWR.html");
+            HttpURLConnection yc = (HttpURLConnection) ur.openConnection();
+            BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
+            String inputline;
+            for (int i =0; i < 23; i++) {
+                in.readLine();
+            }
+            inputline= in.readLine();
+            int i =0;
+            while (!inputline.substring(i, i+5).equals(endRow)) {
+                i++;
+            }
+            tableData[0]=inputline.substring(i+5);
+            int j =0;
+            while(j < 8 && (inputline= in.readLine()) != null) {
+                i =0;
+                while (!inputline.substring(i, i+5).equals(endRow)) {
+                    i++;
+                }
+                tableData[j] = tableData[j] + inputline.substring(0,i+5);
+                j++;
+                tableData[j]=inputline.substring(i+5);
+
+            }
+            for (int k =0; k < tableData.length-1; k++) {
+                i =0;
+                int count = 0;
+                while (count < 2) {
+                    if (tableData[k].substring(i, i+4).equals("<td>")) {
+                        count++;
+                    }
+                    i++;
+                }
+                temp = Integer.parseInt(tableData[k].substring(i, i+9).replaceAll("\\D+",""));
+                if(temp < minWind) {
+                    minWind = temp;
+                }
+                else if (temp > maxWind) {
+                    maxWind = temp;
+                }
+                i+=7;
+                while (count < 5) {
+                    if (tableData[k].substring(i, i+4).equals("<td>")) {
+                        count++;
+                    }
+                    i++;
+                }
+                temp = Integer.parseInt(tableData[k].substring(i, i+9).replaceAll("\\D+",""));
+                if(temp < minTemp) {
+                    minTemp = temp;
+                }
+                else if (temp > maxTemp) {
+                    maxTemp = temp;
+                }
+                i+=7;
+                while (count < 9) {
+                    if (tableData[k].substring(i, i+4).equals("<td>")) {
+                        count++;
+                    }
+                    i++;
+                }
+                temp = Integer.parseInt(tableData[k].substring(i, i+9).replaceAll("\\D+",""));
+                if(temp < minHmidity) {
+                    minHmidity = temp;
+                }
+                else if (temp > maxHumidity) {
+                    maxHumidity = temp;
+                }
+            }
+            weather[0] = minTemp+"-"+maxTemp;
+            weather[1] = minHmidity + "-" + maxHumidity;
+            weather[2] = minWind+"-"+maxWind;
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return weather;
     }
 }
