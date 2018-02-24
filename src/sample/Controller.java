@@ -2,6 +2,7 @@ package sample;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -23,7 +24,7 @@ public class Controller {
     @FXML private TextField username;
     @FXML private PasswordField password;
     @FXML private TextField siteNumber;
-    @FXML private TextField siteName;
+    @FXML private ComboBox siteName;
     @FXML private TextArea projectNote;
     @FXML private TextArea nonProjectNote;
     @FXML private Text filename;
@@ -45,7 +46,7 @@ public class Controller {
         input[1]=username.getText();
         input[2]=password.getText();
         input[3]=siteNumber.getText();
-        input[4]=siteName.getText();
+        input[4]=siteName.getValue().toString().substring(0,4).replaceAll("\\D+","");;
         input[5]=projectNote.getText();
         input[6]=nonProjectNote.getText();
         input[7]=filename.getText();
@@ -139,7 +140,7 @@ public class Controller {
             siteNumElement.sendKeys(input[3]);
             WebElement dropdownLink = driver.findElement(By.cssSelector("#main > div.row > div > form:nth-child(14) > table:nth-child(3) > tbody > tr:nth-child(" + (id +1) + ") > td:nth-child(2) > div > a.current"));
             dropdownLink.click();
-            WebElement dropdown= driver.findElement(By.cssSelector("#main > div.row > div > form:nth-child(14) > table:nth-child(3) > tbody > tr:nth-child("+(id+1)+") > td:nth-child(2) > div > ul > li:nth-child(19)"));
+            WebElement dropdown= driver.findElement(By.cssSelector("#main > div.row > div > form:nth-child(14) > table:nth-child(3) > tbody > tr:nth-child("+(id+1)+") > td:nth-child(2) > div > ul > li:nth-child("+input[4]+" )"));
             dropdown.click();
             WebElement startTimeElement=driver.findElement(By.xpath("//input[@name='locationtimeperiodstart" + id + "']"));
             startTimeElement.sendKeys(times[j]);

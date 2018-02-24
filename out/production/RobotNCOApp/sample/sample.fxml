@@ -6,6 +6,9 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
 <GridPane fx:controller="sample.Controller"
           xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
 
@@ -35,8 +38,30 @@
             GridPane.columnIndex="1" GridPane.rowIndex="5"/>
     <Label text="Site Name: "
            GridPane.columnIndex="0" GridPane.rowIndex="6"/>
-    <TextField fx:id="siteName"
-            GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+    <ComboBox fx:id="siteName" GridPane.columnIndex="1" GridPane.rowIndex="6" promptText="choose">
+        <items>
+            <FXCollections fx:factory="observableArrayList">
+                <String fx:value="2 : 11 John Street" />
+                <String fx:value="3 : 23 Newark Ave" />
+                <String fx:value="4 : 31 Newark Ave" />
+                <String fx:value="5 : 33 Newark Ave" />
+                <String fx:value="6 : 35 Newark Ave" />
+                <String fx:value="7 : 37 Newark Ave" />
+                <String fx:value="8 : 39 Newark Ave" />
+                <String fx:value="9 : 41 Newark Ave" />
+                <String fx:value="10 : 45 Newark Ave" />
+                <String fx:value="11 : 51 Newark Ave" />
+                <String fx:value="12 : 53 Newark Ave" />
+                <String fx:value="13 : 59 A Newark Ave" />
+                <String fx:value="14 : 59 B Newark Ave" />
+                <String fx:value="15 : 61 Newark Ave" />
+                <String fx:value="16 : 65 Newark Ave" />
+                <String fx:value="17 : 67 Newark Ave" />
+                <String fx:value="18 : 73 Newark Ave" />
+                <String fx:value="19 : 85 Newark Ave" />
+            </FXCollections>
+        </items>
+    </ComboBox>
     <Label text="Project Notations: "
            GridPane.columnIndex="0" GridPane.rowIndex="7" />
     <TextArea fx:id="projectNote"
