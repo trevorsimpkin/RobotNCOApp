@@ -2,10 +2,7 @@ package sample;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import org.openqa.selenium.By;
@@ -30,6 +27,8 @@ public class Controller {
     @FXML private Text filename;
     @FXML private TextField startTime;
     @FXML private TextField intervals;
+    @FXML private TextField otherSiteName;
+    @FXML private CheckBox otherSite;
 
 
     @FXML protected void handleDataFileSearch (ActionEvent event){
@@ -38,20 +37,38 @@ public class Controller {
         File selectedFile = fileChooser.showOpenDialog(filename.getScene().getWindow());
         filename.setText(selectedFile.getAbsolutePath());
     }
+    @FXML protected void selectOtherSiteName(ActionEvent event){
+        if(otherSite.isSelected()) {
+            otherSiteName.setVisible(true);
+            siteName.setDisable(true);
+        }
+        else {
+            otherSiteName.setVisible(false);
+            siteName.setDisable(false);
+        }
+
+    }
     @FXML protected void onSubmit (ActionEvent event) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         LocalDate now = LocalDate.now();
-        String [] input = new String [10];
+        String [] input = new String [11];
         input[0]=url.getText();
         input[1]=username.getText();
         input[2]=password.getText();
         input[3]=siteNumber.getText();
-        input[4]=siteName.getValue().toString().substring(0,4).replaceAll("\\D+","");;
+        if (otherSite.isSelected()){
+            input[4]="20";
+        }
+        else {
+            input[4]=siteName.getValue().toString().substring(0,4).replaceAll("\\D+","");
+        }
+
         input[5]=projectNote.getText();
         input[6]=nonProjectNote.getText();
         input[7]=filename.getText();
         input[8]=now.format(dtf)+" "+startTime.getText()+":00";
         input[9]=intervals.getText();
+        input[10]=otherSiteName.getText();
         int numIntervals = Integer.parseInt(input[9]);
         String [] times = new String [numIntervals*2];
         double [] data = readCSVFile(input[7],input[8],numIntervals, times);
@@ -142,6 +159,10 @@ public class Controller {
             dropdownLink.click();
             WebElement dropdown= driver.findElement(By.cssSelector("#main > div.row > div > form:nth-child(14) > table:nth-child(3) > tbody > tr:nth-child("+(id+1)+") > td:nth-child(2) > div > ul > li:nth-child("+input[4]+" )"));
             dropdown.click();
+            if(input[4].equals("20")) {
+                WebElement otherSiteNameElement=driver.findElement(By.xpath("//input[@name='monitoringlocationother" + id + "']"));
+                otherSiteNameElement.sendKeys(input[10]);
+            }
             WebElement startTimeElement=driver.findElement(By.xpath("//input[@name='locationtimeperiodstart" + id + "']"));
             startTimeElement.sendKeys(times[j]);
             WebElement endTimeElement=driver.findElement(By.xpath("//input[@name='locationtimeperiodend" + id + "']"));
@@ -151,7 +172,12 @@ public class Controller {
             WebElement projNotationElement = driver.findElement(By.xpath("//textarea[@name='notations" + id + "']"));
             projNotationElement.sendKeys(input[5]);
             WebElement nonProjNotationElement = driver.findElement(By.xpath("//textarea[@name='extrafield2" + id + "']"));
-            nonProjNotationElement.sendKeys(input[6]);
+            if(data[j+1]>85.0) {
+                nonProjNotationElement.sendKeys("Non-project exceedance due to heavy truck passby on Newark Avenue.");
+            }
+            else {
+                nonProjNotationElement.sendKeys(input[6]);
+            }
             id++;
 
         }
