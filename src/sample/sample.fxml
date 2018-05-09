@@ -92,6 +92,8 @@
            GridPane.columnIndex="0" GridPane.rowIndex="14"/>
     <TextField fx:id="intervals"
             GridPane.columnIndex="1" GridPane.rowIndex="14"/>
+    <CheckBox fx:id="isExceedance" text="Data includes exceedances"
+              GridPane.columnIndex="2" GridPane.rowIndex="14"/>
     <HBox spacing="10" alignment="BOTTOM_LEFT"
           GridPane.columnIndex="0" GridPane.rowIndex="15">
         <Button text="Make Entry"
